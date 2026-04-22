@@ -1,9 +1,6 @@
 #include "libcron/CronSchedule.h"
 #include <tuple>
 
-using namespace std::chrono;
-using namespace date;
-
 namespace libcron
 {
 
@@ -18,13 +15,13 @@ namespace libcron
         while (!done && --max_iterations > 0)
         {
             bool date_changed = false;
-            year_month_day ymd = date::floor<days>(curr);
+            std::chrono::year_month_day ymd = std::chrono::floor<std::chrono::days>(curr);
 
             // Add months until one of the allowed days are found, or stay at the current one.
             if (data.get_months().find(static_cast<Months>(unsigned(ymd.month()))) == data.get_months().end())
             {
-                auto next_month = ymd + months{1};
-                sys_days s = next_month.year() / next_month.month() / 1;
+                auto next_month = ymd + std::chrono::months{1};
+                std::chrono::sys_days s = next_month.year() / next_month.month() / 1;
                 curr = s;
                 date_changed = true;
             }
@@ -35,23 +32,23 @@ namespace libcron
                 if (data.get_day_of_month().find(static_cast<DayOfMonth>(unsigned(ymd.day()))) ==
                     data.get_day_of_month().end())
                 {
-                    sys_days s = ymd;
+                    std::chrono::sys_days s = ymd;
                     curr = s;
-                    curr += days{1};
+                    curr += std::chrono::days{1};
                     date_changed = true;
                 }
             }
             else
             {
                 //Add days until the current weekday is one of the allowed weekdays
-                year_month_weekday ymw = date::floor<days>(curr);
+                std::chrono::year_month_weekday ymw = std::chrono::floor<std::chrono::days>(curr);
 
                 if (data.get_day_of_week().find(static_cast<DayOfWeek>(ymw.weekday().c_encoding())) ==
                     data.get_day_of_week().end())
                 {
-                    sys_days s = ymd;
+                    std::chrono::sys_days s = ymd;
                     curr = s;
-                    curr += days{1};
+                    curr += std::chrono::days{1};
                     date_changed = true;
                 }
             }
@@ -61,18 +58,18 @@ namespace libcron
                 auto date_time = to_calendar_time(curr);
                 if (data.get_hours().find(static_cast<Hours>(date_time.hour)) == data.get_hours().end())
                 {
-                    curr += hours{1};
-                    curr -= minutes{date_time.min};
-                    curr -= seconds{date_time.sec};
+                    curr += std::chrono::hours{1};
+                    curr -= std::chrono::minutes{date_time.min};
+                    curr -= std::chrono::seconds{date_time.sec};
                 }
                 else if (data.get_minutes().find(static_cast<Minutes >(date_time.min)) == data.get_minutes().end())
                 {
-                    curr += minutes{1};
-                    curr -= seconds{date_time.sec};
+                    curr += std::chrono::minutes{1};
+                    curr -= std::chrono::seconds{date_time.sec};
                 }
                 else if (data.get_seconds().find(static_cast<Seconds>(date_time.sec)) == data.get_seconds().end())
                 {
-                    curr += seconds{1};
+                    curr += std::chrono::seconds{1};
                 }
                 else
                 {
@@ -89,7 +86,7 @@ namespace libcron
         // By discarding fraction seconds in the scheduled time,
         //  the `tick()` within the same second will never be earlier than schedule time,
         //  and the task will trigger in that `tick()`.
-        curr -= curr.time_since_epoch() % seconds{1};
+        curr -= curr.time_since_epoch() % std::chrono::seconds{1};
 
         return std::make_tuple(max_iterations > 0, curr);
     }

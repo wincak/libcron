@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 project(libcron)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Deactivate Iterator-Debugging on Windows
 option(LIBCRON_DEACTIVATE_ITERATOR_DEBUGGING "Build with iterator-debugging (MSVC only)." OFF)

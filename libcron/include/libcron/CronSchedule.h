@@ -33,8 +33,8 @@ namespace libcron
             // https://github.com/HowardHinnant/date/wiki/Examples-and-Recipes#obtaining-ymd-hms-components-from-a-time_point
             static DateTime to_calendar_time(std::chrono::system_clock::time_point time)
             {
-                auto daypoint = date::floor<date::days>(time);
-                auto ymd = date::year_month_day(daypoint);   // calendar date
+                auto daypoint = std::chrono::floor<std::chrono::days>(time);
+                auto ymd = std::chrono::year_month_day(daypoint);   // calendar date
                 auto time_of_day = date::make_time(time - daypoint); // Yields time_of_day type
 
                 // Obtain individual components as integers
